@@ -188,7 +188,7 @@ Create a modern, full-stack Todo list application that demonstrates best practic
 - Spring Boot 3.2+
 - Spring Data JPA
 - Spring Security
-- PostgreSQL database
+- H2 database (in-memory for demo)
 - JWT for authentication
 - Maven build tool
 
@@ -298,10 +298,10 @@ The following features are explicitly OUT of scope for the initial release:
 ## 8. Dependencies & Constraints
 
 ### Dependencies
-- PostgreSQL database instance
+- H2 database (embedded, no setup required)
 - Java 17 runtime
 - Node.js 18+ for frontend build
-- Domain/hosting for deployment
+- Domain/hosting for deployment (optional for demo)
 
 ### Constraints
 - Development by single developer/AI pair
