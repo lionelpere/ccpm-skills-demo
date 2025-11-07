@@ -1,0 +1,357 @@
+# CCPM Workflow Diagram
+
+## Complete 5-Phase Workflow
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                    Phase 1: PRD                         │
+│              (Product Requirements Document)            │
+│                                                         │
+│  Command: /pm:prd-new {feature-name}                   │
+│  Duration: 30-45 minutes                               │
+│  Output: .claude/prds/{feature-name}.md                │
+│                                                         │
+│  What: Brainstorming + Requirements Capture            │
+│  - Problem Statement                                   │
+│  - User Stories                                        │
+│  - Functional & Non-Functional Requirements           │
+│  - Success Criteria                                    │
+│  - Out of Scope                                        │
+└───────────────────────┬─────────────────────────────────┘
+                        │
+                        ▼
+┌─────────────────────────────────────────────────────────┐
+│                  Phase 2: EPIC                          │
+│           (Technical Implementation Plan)               │
+│                                                         │
+│  Command: /pm:prd-parse {feature-name}                 │
+│  Duration: 15-30 minutes                               │
+│  Output: .claude/epics/{feature-name}/epic.md          │
+│                                                         │
+│  What: Technical Planning                              │
+│  - Architecture Approach                               │
+│  - Technology Decisions                                │
+│  - Data Model Changes                                  │
+│  - API Design                                          │
+│  - Task Breakdown Preview                              │
+└───────────────────────┬─────────────────────────────────┘
+                        │
+                        ▼
+┌─────────────────────────────────────────────────────────┐
+│                 Phase 3: TASKS                          │
+│             (Work Item Decomposition)                   │
+│                                                         │
+│  Command: /pm:epic-decompose {feature-name}            │
+│  Duration: 10-20 minutes                               │
+│  Output: .claude/epics/{feature-name}/001.md, 002.md...│
+│                                                         │
+│  What: Breaking into Executable Tasks                  │
+│  - Tasks sized 2-8 hours each                         │
+│  - Acceptance Criteria defined                         │
+│  - Dependencies mapped                                 │
+│  - Parallelization identified                          │
+└───────────────────────┬─────────────────────────────────┘
+                        │
+                        ▼
+┌─────────────────────────────────────────────────────────┐
+│              Phase 4: GITHUB SYNC                       │
+│          (Publishing & Worktree Creation)               │
+│                                                         │
+│  Command: /pm:epic-sync {feature-name}                 │
+│  Duration: 2-3 minutes                                 │
+│  Output: GitHub issues + Git worktree                  │
+│                                                         │
+│  What: Sync to GitHub                                  │
+│  - Create Epic issue                                   │
+│  - Create Sub-issues (tasks)                          │
+│  - Rename files: 001.md → {issue-id}.md              │
+│  - Create Git worktree: ../epic-{feature-name}/       │
+└───────────────────────┬─────────────────────────────────┘
+                        │
+                        ▼
+┌─────────────────────────────────────────────────────────┐
+│            Phase 5: PARALLEL EXECUTION                  │
+│          (Multi-Agent Implementation)                   │
+│                                                         │
+│  Command: /pm:issue-start {issue-id}                   │
+│  Duration: Variable (40-70% faster than sequential)   │
+│  Output: Implemented code + tests                     │
+│                                                         │
+│  What: Execute with Parallel Agents                    │
+│  - Agent 1: Database Layer                            │
+│  - Agent 2: API Layer                                 │
+│  - Agent 3: Frontend Layer                            │
+│  - Agent 4: Testing Layer                             │
+│  - Consolidate results                                │
+└─────────────────────────────────────────────────────────┘
+```
+
+## Parallel Execution Detail
+
+```
+Sequential Execution (Traditional):
+═══════════════════════════════════════════════
+   Database  →  API  →  Frontend  →  Tests
+    (3h)       (5h)      (6h)        (4h)
+
+   Total: 18 hours
+═══════════════════════════════════════════════
+
+
+Parallel Execution (CCPM):
+═══════════════════════════════════════════════
+   Agent 1: Database    ═══════ (3h)
+                                │
+   Agent 2: API         ══════════════ (5h)
+                                │
+   Agent 3: Frontend    ════════════════════ (6h)
+                                       │
+   Agent 4: Tests                      ══════════ (4h)
+
+   Total: 8 hours (56% faster!)
+═══════════════════════════════════════════════
+```
+
+## File Structure Evolution
+
+```
+BEFORE GitHub Sync:
+═══════════════════════════════════════
+.claude/
+└── epics/
+    └── user-profile/
+        ├── epic.md
+        ├── 001.md    ← Numbered
+        ├── 002.md    ← Numbered
+        └── 003.md    ← Numbered
+
+
+AFTER GitHub Sync:
+═══════════════════════════════════════
+.claude/
+└── epics/
+    └── user-profile/
+        ├── epic.md
+        ├── 235.md    ← Renamed to issue ID
+        ├── 236.md    ← Renamed to issue ID
+        └── 237.md    ← Renamed to issue ID
+
++ GitHub:
+  - Epic Issue #234
+  - Sub-issues #235, #236, #237
+
++ Git Worktree:
+  ../epic-user-profile/    ← Isolated workspace
+```
+
+## Work Stream Patterns
+
+### Pattern 1: Layer-Based Streams
+
+```
+┌─────────────────┐
+│  Stream 1: DB   │  Tasks 001-002
+│  Files: models/ │  Duration: 3h
+│  migrations/    │  Agent: DB Specialist
+└─────────────────┘
+         │
+         ▼
+┌─────────────────┐
+│ Stream 2: API   │  Tasks 003-005
+│ Files: api/     │  Duration: 5h
+│ services/       │  Agent: API Specialist
+└─────────────────┘
+         │
+         ▼
+┌─────────────────┐
+│ Stream 3: UI    │  Tasks 006-008
+│ Files:          │  Duration: 6h
+│ components/     │  Agent: UI Specialist
+└─────────────────┘
+         │
+         ▼
+┌─────────────────┐
+│Stream 4: Tests  │  Tasks 009-011
+│ Files: tests/   │  Duration: 4h
+│ __tests__/      │  Agent: Test Specialist
+└─────────────────┘
+```
+
+### Pattern 2: Component-Based Streams
+
+```
+┌──────────────────┐   ┌──────────────────┐   ┌──────────────────┐
+│ Stream 1: Auth   │   │ Stream 2: Notif  │   │Stream 3: Profile │
+│                  │   │                  │   │                  │
+│ auth/            │   │ notifications/   │   │ profile/         │
+│ middleware/auth  │   │ socket/          │   │ api/profile      │
+│                  │   │                  │   │                  │
+│ Duration: 6h     │   │ Duration: 5h     │   │ Duration: 4h     │
+└──────────────────┘   └──────────────────┘   └──────────────────┘
+         │                      │                      │
+         └──────────────────────┴──────────────────────┘
+                                │
+                                ▼
+                         Runs in Parallel!
+```
+
+## Decision Flow
+
+```
+                    ┌───────────────┐
+                    │ Need Feature? │
+                    └───────┬───────┘
+                            │
+                     ┌──────▼──────┐
+                     │ Size > 4h?  │
+                     └──────┬──────┘
+                            │
+                  ┌─────────┴─────────┐
+                  │                   │
+                 YES                 NO
+                  │                   │
+         ┌────────▼────────┐   ┌─────▼──────┐
+         │ Full Workflow   │   │ Quick Fix  │
+         │ (5 phases)      │   │ Direct Code│
+         └────────┬────────┘   └────────────┘
+                  │
+         ┌────────▼────────┐
+         │ PRD Needed?     │
+         └────────┬────────┘
+                  │
+         ┌────────┴────────┐
+         │                 │
+      Complex          Simple
+         │                 │
+    ┌────▼─────┐     ┌────▼─────┐
+    │ Full PRD │     │ Mini PRD │
+    │ 30-45min │     │ 10-15min │
+    └──────────┘     └──────────┘
+```
+
+## Traceability Chain
+
+```
+┌────────────────────────────────────────────┐
+│ USER NEED                                  │
+│ "I want users to be able to reset their    │
+│  password if they forget it"               │
+└──────────────────┬─────────────────────────┘
+                   │
+                   ▼
+┌────────────────────────────────────────────┐
+│ PRD: Password Reset                        │
+│                                            │
+│ User Story:                                │
+│ "As a user, I want to reset my password   │
+│  so I can regain access to my account"    │
+│                                            │
+│ FR-1: Users can request password reset    │
+│ FR-2: Reset link expires in 24 hours      │
+│ FR-3: Old password becomes invalid        │
+└──────────────────┬─────────────────────────┘
+                   │
+                   ▼
+┌────────────────────────────────────────────┐
+│ EPIC: Password Reset Implementation       │
+│                                            │
+│ Technical Approach:                        │
+│ - JWT tokens for reset links              │
+│ - Email service integration                │
+│ - bcrypt for password hashing             │
+│                                            │
+│ Tasks:                                     │
+│ 001: Reset token generation               │
+│ 002: Email service integration            │
+│ 003: Reset form UI                        │
+└──────────────────┬─────────────────────────┘
+                   │
+                   ▼
+┌────────────────────────────────────────────┐
+│ TASK #235: Reset token generation         │
+│                                            │
+│ Acceptance Criteria:                       │
+│ - [ ] Generate unique token               │
+│ - [ ] Store with user_id and expiry       │
+│ - [ ] Token expires after 24h             │
+└──────────────────┬─────────────────────────┘
+                   │
+                   ▼
+┌────────────────────────────────────────────┐
+│ CODE: src/services/password-reset.js:42   │
+│                                            │
+│ function generateResetToken(userId) {     │
+│   const token = jwt.sign(                 │
+│     { userId },                           │
+│     SECRET,                               │
+│     { expiresIn: '24h' }                  │
+│   );                                      │
+│   return token;                           │
+│ }                                         │
+└────────────────────────────────────────────┘
+
+Every line of code traces back to a requirement! ✅
+```
+
+## Skill Integration
+
+```
+                  ┌─────────────────────┐
+                  │ CCPM Workflow       │
+                  │ Orchestrator        │
+                  │ (Guides everything) │
+                  └──────────┬──────────┘
+                             │
+        ┌────────────────────┼────────────────────┐
+        │                    │                    │
+        ▼                    ▼                    ▼
+┌───────────────┐    ┌───────────────┐    ┌───────────────┐
+│ PRD Expert    │    │ Epic Planner  │    │ Dev Guide     │
+│ (Brainstorm)  │    │ (Technical)   │    │ (Help)        │
+└───────┬───────┘    └───────┬───────┘    └───────────────┘
+        │                    │
+        │                    │
+        ▼                    ▼
+    [PRD.md]            [Epic.md]
+        │                    │
+        └─────────┬──────────┘
+                  │
+                  ▼
+        ┌─────────────────┐
+        │ Epic Planner    │
+        │ (Decompose)     │
+        └────────┬────────┘
+                 │
+                 ▼
+           [Task files]
+                 │
+                 ▼
+        ┌─────────────────┐
+        │ GitHub Sync     │
+        │ (Publish)       │
+        └────────┬────────┘
+                 │
+                 ▼
+      [Issues + Worktree]
+                 │
+                 ▼
+        ┌─────────────────┐
+        │ Parallel Exec   │
+        │ (Implement)     │
+        └────────┬────────┘
+                 │
+                 ▼
+            [Code + Tests]
+                 │
+                 ▼
+        ┌─────────────────┐
+        │ Quality Guardian│
+        │ (Validate)      │
+        └────────┬────────┘
+                 │
+                 ▼
+        ┌─────────────────┐
+        │ Merge to Main   │
+        │ ✅ DONE         │
+        └─────────────────┘
+```
