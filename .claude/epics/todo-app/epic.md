@@ -645,3 +645,28 @@ The epic is considered DONE when:
 ---
 
 **Next Step:** Decompose this epic into individual task files (001.md - 010.md) and sync to GitHub.
+
+---
+
+## GitHub Issues
+
+**Epic:** https://github.com/lionelpere/ccpm-skills-demo/issues/1
+
+**Tasks:**
+- #2: Project Setup & Infrastructure
+- #3: Database Schema & JPA Models
+- #4: Authentication System (Backend)
+- #5: Task CRUD API (Backend) - ✅ Parallel-safe
+- #6: Frontend Project Setup - ✅ Parallel-safe
+- #7: Authentication UI (Frontend) - ✅ Parallel-safe
+- #8: Task Management UI (Frontend)
+- #9: Backend Testing - ✅ Parallel-safe
+- #10: Frontend Testing - ✅ Parallel-safe
+- #11: Deployment & Documentation
+
+**Parallel Execution Waves:**
+- Wave 1: #2 → #3 → #4 (Sequential foundation)
+- Wave 2: #5 (Backend) + #6 (Frontend) in parallel
+- Wave 3: #7 (Frontend Auth UI) + #8 (Task UI)
+- Wave 4: #9 (Backend Tests) + #10 (Frontend Tests) in parallel
+- Wave 5: #11 (Deployment)
