@@ -6,7 +6,11 @@
       "Bash(git push:*)",
       "Bash(gh issue create:*)",
       "Bash(gh label create:*)",
-      "Bash(gh issue edit:*)"
+      "Bash(gh issue edit:*)",
+      "Bash(git --version:*)",
+      "Bash(lsof:*)",
+      "Bash(/dev/null)",
+      "Bash(/usr/libexec/java_home:*)"
     ],
     "deny": [],
     "ask": []
